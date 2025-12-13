@@ -33,7 +33,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["app", "ui"]
+packages = ["app"]
 
 # ---------- UV CONFIG ----------
 [tool.uv]
@@ -50,7 +50,3 @@ line-length = 100
 dev = [
     "pytest>=7.4.4",
 ]
-
-# ---------- SCRIPTS ----------
-[project.scripts]
-crmsys-ui = "ui.gradio_app:launch_ui"
