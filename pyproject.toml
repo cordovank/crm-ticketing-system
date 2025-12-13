@@ -1,0 +1,56 @@
+[project]
+name = "crmsys"
+version = "0.1.0"
+description = "Mock CRM/Ticketing System"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+
+authors = [
+    { name = "Nellie Cordova", email = "cordova.nellie@gmail.com" }
+]
+
+dependencies = [
+    "fastapi>=0.115.0",
+    "uvicorn>=0.22.0,<0.23",
+    "pydantic>=2.0",
+    "requests>=2.31.0,<3",
+    "openai>=1.0.0,<2",
+    "gradio>=5.22.0,<6",
+    "python-dotenv>=1.0.0,<2",
+    "email-validator>=2.3.0",
+    "pydantic-settings>=2.12.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0,<8",
+    "ruff>=0.6.0,<1",
+    "black>=24.3.0,<25",
+]
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["app", "ui"]
+
+# ---------- UV CONFIG ----------
+[tool.uv]
+index-url = "https://pypi.org/simple"
+
+# ---------- CODE QUALITY ----------
+[tool.ruff]
+line-length = 100
+
+[tool.black]
+line-length = 100
+
+[dependency-groups]
+dev = [
+    "pytest>=7.4.4",
+]
+
+# ---------- SCRIPTS ----------
+[project.scripts]
+crmsys-ui = "ui.gradio_app:launch_ui"
