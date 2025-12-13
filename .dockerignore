@@ -1,0 +1,24 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments & tooling
+.venv/
+.uv/
+.env
+.env.*
+
+# VCS
+.git/
+.gitignore
+
+# Tests & docs (not needed at runtime)
+tests/
+docs/
+
+# OS / editor noise
+.DS_Store
+.vscode/
+.idea/
