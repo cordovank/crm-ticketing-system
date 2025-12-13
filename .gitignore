@@ -8,7 +8,6 @@ __pycache__/
 venv/
 env/
 ENV/
-enterpriselink/
 
 # Environment files / secrets
 .env

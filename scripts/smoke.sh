@@ -15,7 +15,7 @@ print_fail() { echo -e "${RED}FAIL${NC} - $1"; }
 
 
 echo "======================================"
-echo "   EnterpriseLink Backend Smoke Test   "
+echo "   CRM/Ticketing API Smoke Test   "
 echo "======================================"
 
 
