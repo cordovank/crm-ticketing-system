@@ -11,10 +11,9 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Copy everything needed for packaging
+# Copy project files
 COPY pyproject.toml README.md ./
 COPY app ./app
-COPY ui ./ui
 
 # Install project
 RUN pip install --upgrade pip \

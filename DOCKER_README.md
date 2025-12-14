@@ -10,8 +10,8 @@ The image is published on Docker Hub and exposes a FastAPI-based REST API.
 
 ### Build locally
 ```bash
-docker build -t cordn29/crmsys:0.1.0 .
-docker tag cordn29/crmsys:0.1.0 cordn29/crmsys:latest
+docker build -t cordn29/crmsys:0.2.0 .
+docker tag cordn29/crmsys:0.2.0 cordn29/crmsys:latest
 ```
 
 ### Run the service
@@ -73,3 +73,45 @@ Example tokens:
 - `admin123` — admin role
 
 This is intended to model enterprise-style API access and will be extended in future integrations.
+
+--- 
+
+## Postmortem: ARM vs AMD64 Docker Image Compatibility
+
+**Summary**
+During deployment of the CRM backend to a Hugging Face Docker Space, the container failed at runtime with the following error:
+
+```bash
+exec /usr/bin/sh: exec format error
+```
+
+**Root Cause**
+
+The original backend Docker image was built on an ARM64 machine (Apple Silicon).
+Hugging Face Spaces currently run containers on linux/amd64.
+
+Although the image built and pushed successfully, the runtime attempted to execute ARM64 binaries (including /usr/bin/sh) on an AMD64 host, resulting in an immediate failure.
+
+**Resolution**
+
+A new backend image was built explicitly for linux/amd64 using Docker Buildx and published under a separate tag:
+
+```bash
+docker buildx build \
+  --platform linux/amd64 \
+  -t cordn29/crmsys:0.2.0-amd64 \
+  --push \
+  .
+```
+
+The Hugging Face Space was then updated to reference the AMD64-compatible image:
+
+```bash
+FROM cordn29/crmsys:0.2.0-amd64
+```
+
+## Lessons Learned
+- Docker images are architecture-specific unless explicitly built as multi-arch
+- Image registries do not enforce runtime compatibility
+- Cloud platforms may differ from local development machines
+- Explicit architecture tagging improves portability and auditability
