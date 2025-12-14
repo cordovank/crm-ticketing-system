@@ -32,14 +32,14 @@ For demo purposes, both the backend service and the UI are deployed within a **s
 +---------------------------+
 |   Hugging Face Docker     |
 |                           |
-|  +---------------------+ |
-|  |  Gradio UI (7860)   | |
-|  +----------+----------+ |
-|             |            |
-|             v            |
-|  +---------------------+ |
-|  | FastAPI CRM (8000)  | |
-|  +---------------------+ |
+|  +---------------------+  |
+|  |  Gradio UI (7860)   |  |
+|  +----------+----------+  |
+|             |             |
+|             v             |
+|  +---------------------+  |
+|  | FastAPI CRM (8000)  |  |
+|  +---------------------+  |
 +---------------------------+
 ```
 
@@ -52,7 +52,6 @@ For demo purposes, both the backend service and the UI are deployed within a **s
 * **Deployment Model:**
   The container extends a published backend Docker image and layers the UI on top, running both services together for seamless interaction.
 
----
 
 ## Notes
 * This combined deployment is for interactive demo purposes

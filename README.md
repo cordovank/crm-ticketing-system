@@ -1,60 +1,65 @@
-# **CRM/Ticketing System**
+# **CRM & Ticketing System**
 
-**Lightweight enterprise CRM and ticketing microservice with a FastAPI backend and Gradio-based UI.**
+**A standalone, Dockerized CRM & Ticketing backend built with FastAPI, designed to be reusable across UIs, agents, and external integrations.**
 
-This project provides a **self-contained CRM/Ticketing system** designed to model common enterprise backend patterns, including authenticated APIs, role-based access control, structured domain operations, and a simple user interface for interaction.
+The project demonstrates clean service boundaries, containerized deployment, and UI/API decoupling following real-world enterprise patterns, including authenticated APIs, role-based access control, structured domain operations, and a simple user interface for interaction.
+
+Demo: https://huggingface.co/spaces/cordovank/crmsys
 
 ---
 
 ## 📌 **Overview**
-The CRM/Ticketing system simulates a backend service for managing customers, support tickets, and associated notes. It features token-based authentication with role-based access control (RBAC) to restrict operations based on user roles (e.g., "agent", "admin").
+This repository contains the **CRM backend service** only.
 
-Key features include:
-* **FastAPI backend** exposing customer, ticket, and note APIs
-* **Token-based authentication with RBAC**
+* **FastAPI-based REST API** exposing customer, ticket, and note APIs
+* **Token-based authentication with RBAC** (agent / admin)
 * **In-memory data storage** with seeded demo data
-* **Gradio UI** for interacting with the system
-* **Deterministic, role-aware operations**
+* **Dockerized** for reproducible deployment
+* Designed for integration with UIs and LLM agents
 
-This service can be used as:
-
-* A backend service for enterprise integrations
-* A mock CRM for testing automation pipelines
-* A reference architecture for RBAC-enabled microservices
-* A foundation for future extensions (agents, workflows, integrations)
+A **Gradio-based UI** is deployed separately on Hugging Face Spaces as a client of this API.
 
 ---
 
 ## 🧱 **Architecture**
 
+```text
++-------------------+        HTTP        +----------------------+
+|   UI / Agent      |  ─────────────▶   |   CRM API Service    |
+|  (Gradio, LLM)    |                   |  (FastAPI, Docker)  |
++-------------------+                   +----------------------+
 ```
-├── app/
-│   ├── config.py               → Settings, tokens, environment
-│   ├── main.py                 → FastAPI application entrypoint + startup logic
-│   ├── api/
-│   │   ├── customers.py        → Customer retrieval
-│   │   ├── tickets.py          → Ticket CRUD operations
-│   │   ├── notes.py            → Ticket notes management
-│   │   └── router.py           → Master API router
-│   ├── auth/
-│   │   ├── middleware.py       → Bearer token auth + role injection
-│   │   └── rbac.py             → Role-Based Access Control helper
-│   ├── models/
-│   │   └── storage.py          → In-memory store
-│   └── utils/
-│       └── exceptions.py       → Consistent API error responses
-│
-├── scripts/
-│   └── smoke.sh                → Automated backend verification script
-│
-├── ui/
-│   └── gradio_app.py           → User-facing UI for interacting with AI agent
-│
-├── .env
-├── README.md
-├── pyproject.toml
-└── uv.lock
+
+The backend is intentionally UI-agnostic and can be consumed by:
+* Web UIs
+* Agent services
+* Integration tests
+* Other microservices
+
+---
+
+## API Features
+
+* **Customers**: Retrieve customer records
+* **Tickets**: Create, list, update tickets
+* **Notes**: Add notes to tickets
+* **Health**: `/health` endpoint for readiness checks
+
+---
+
+## Run Locally with Docker
+
+```bash
+# build the image
+docker build -t cordn29/crmsys:0.2.0 .
+
+# run the service
+docker run -p 8000:8000 cordn29/crmsys:0.2.0
 ```
+
+**Verify**
+* **API docs:** http://localhost:8000/docs
+* **Health:** http://localhost:8000/health
 
 ---
 
@@ -99,9 +104,7 @@ curl http://localhost:8000/health
 ### **Gradio UI**
 
 ```bash
-uv run python ui/gradio_app.py
-# or
-uv run crmsys-ui
+python ui/gradio_app.py
 ```
 
 Access the UI at:
@@ -112,9 +115,9 @@ http://127.0.0.1:7861
 
 ---
 
-## 🔐 **Authentication & RBAC**
+## 🔐 **Authentication & RBAC (Simulated)**
 
-The backend uses **Bearer token authentication** with role enforcement.
+The API uses **Bearer token authentication** with role enforcement.
 
 ### Tokens
 
@@ -144,74 +147,28 @@ Authorization: Bearer admin123
 
 All authorization is enforced at the API layer.
 
----
-
-## 🗃 **Data Model**
-
-* All data is stored **in-memory**
-* Automatically **seeded at startup**
-* Reset on server restart
-
-Seeded entities include:
-
-* Customers (e.g., IDs `1`, `2`)
-* Tickets and notes created during runtime
-
-This design keeps the service **stateless and deterministic**, ideal for demos and testing.
-
----
-
-## 🧪 **Smoke Test**
-
-An automated smoke test validates the backend end-to-end.
+### Example
 
 ```bash
-chmod +x scripts/smoke.sh
-./scripts/smoke.sh
+curl -H "Authorization: Bearer agent123" http://localhost:8000/api/customers/1
 ```
-
-The script verifies:
-
-* Health endpoint availability
-* Authentication enforcement
-* RBAC behavior
-* Seeded customer retrieval
-* Ticket creation and updates
-* Ticket listing
-* Note creation
-* Unauthorized access handling
-
-All tests assume the backend is already running.
 
 ---
 
-## 🧠 **Example Usage Flow**
+## Docker Image
 
-1. Retrieve a customer:
+The backend is published as a reusable Docker image :
 
-   ```bash
-   GET /customers/1
-   ```
+```bash
+docker pull cordn29/crmsys:0.2.0
+docker pull cordn29/crmsys:0.2.0-amd64
+```
 
-2. Create a ticket:
+---
 
-   ```bash
-   POST /tickets
-   ```
+## Related Deployments
 
-3. Update ticket status:
-
-   ```bash
-   PATCH /tickets/{ticket_id}
-   ```
-
-4. Add a note to a ticket:
-
-   ```bash
-   POST /notes/{ticket_id}
-   ```
-
-View results via the Gradio UI or direct API calls.
+**UI Demo (Hugging Face Spaces):** A combined Docker Space layers a Gradio UI on top of this backend image for interactive demos.
 
 
 > ⚠️ This service is intended for demonstration, testing, and reference purposes.
