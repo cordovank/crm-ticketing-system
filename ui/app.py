@@ -1,10 +1,19 @@
+import os
 import gradio as gr
 import requests
 
 
-BASE_URL = "http://localhost:8000/api"
-AGENT_TOKEN = "agent123"
-ADMIN_TOKEN = "admin123"
+CRM_API_BASE_URL = os.getenv("CRM_API_BASE_URL", "http://localhost:8000")
+BASE_URL = f"{CRM_API_BASE_URL}/api"
+
+AGENT_TOKEN = os.getenv("AGENT_TOKEN", "agent123")
+ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "admin123")
+
+GRADIO_SERVER_NAME = os.getenv("GRADIO_SERVER_NAME")
+GRADIO_SERVER_PORT = os.getenv("GRADIO_SERVER_PORT")
+
+if GRADIO_SERVER_PORT is not None:
+    GRADIO_SERVER_PORT = int(GRADIO_SERVER_PORT)
 
 
 # ---------------------------
@@ -188,7 +197,13 @@ def launch_ui():
                     n_out = gr.Textbox(label="Response")
                     n_btn.click(add_note, inputs=[n_tid, n_text, n_role], outputs=n_out)
 
-        demo.launch()
+    launch_kwargs = {}
+    if GRADIO_SERVER_NAME:
+        launch_kwargs["server_name"] = GRADIO_SERVER_NAME
+    if GRADIO_SERVER_PORT:
+        launch_kwargs["server_port"] = GRADIO_SERVER_PORT
+
+    demo.launch(**launch_kwargs)
 
 
 def main():
